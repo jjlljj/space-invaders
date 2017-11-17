@@ -3,14 +3,19 @@ function Game(screenId) {
   var screen = canvas.getContext('2d');
   var gameSize = { x: canvas.width, y: canvas.height};
   this.bodies = createInvaders(this).concat(new Player(this, gameSize));
+  this.gameOver = false;
 
+  this.animate 
   var self = this;
   var tick = function() {
     self.update();
     self.draw(screen, gameSize);
-    requestAnimationFrame(tick);
+    if(!self.gameOver) {
+      self.animate = requestAnimationFrame(tick);
+    }
   };
   tick();
+  
 };
 
 Game.prototype.update = function() {
@@ -20,8 +25,17 @@ Game.prototype.update = function() {
       return colliding(b1, b2);
     }).length === 0;
   };
+  
   this.bodies = this.bodies.filter(notColliding);
-  // scope issue here with forEach...
+  
+  var playerIsAlive = this.bodies.some(function(body) {
+    return body instanceof Player;
+  });
+
+  if(!playerIsAlive) {
+    this.loseGame()
+  }
+  
   for (var i = 0; i < this.bodies.length; i++) {
     this.bodies[i].update();
   };
@@ -47,6 +61,11 @@ Game.prototype.invadersBelow = function(invader) {
   }).length > 0;
 };
 
+Game.prototype.loseGame = function() {
+  console.log('Game over!')
+  this.gameOver = true;
+  cancelAnimationFrame(this.animate)
+}
 
 function Player(game, gameSize) {
   this.game = game;
@@ -57,7 +76,7 @@ function Player(game, gameSize) {
 };
 
 Player.prototype.update = function() {
-  if (this.keyboarder.isDown(this.keyboarder.KEYS.LEFT  ) && this.center.x > 10) {
+  if (this.keyboarder.isDown(this.keyboarder.KEYS.LEFT) && this.center.x > 10) {
     this.center.x -=2;
   } else if (this.keyboarder.isDown(this.keyboarder.KEYS.RIGHT) && this.center.x < 300) {
     this.center.x += 2;
