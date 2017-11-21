@@ -45,7 +45,11 @@ Game.prototype.draw = function(screen, gameSize) {
   screen.clearRect(0, 0, gameSize.x, gameSize.y);
 
   this.bodies.forEach(function(body) {
-    drawRect(screen, body)
+    if (body instanceof Invader){
+      drawInvader(screen, body)
+    } else {
+      drawRect(screen, body)
+    }
   });
 };
 
@@ -115,7 +119,7 @@ Bullet.prototype.update = function() {
 
 function Invader(game, center) {
   this.game = game;
-  this.size = {x: 15, y: 15};
+  this.size = {x: 20, y: 20};
   this.center = center;
   this.patrolX = 0;
   this.speedX = 0.3;
@@ -148,6 +152,13 @@ function drawRect(screen, body) {
                     body.center.y - body.size.y / 2,
                     body.size.x, body.size.y);
 };
+
+function drawInvader(screen, body) {
+  var img = new Image();
+  img.src = "images/vader.png"
+  screen.drawImage(img, body.center.x - body.size.x / 2,
+                    body.center.y - body.size.y / 2, body.size.x, body.size.y)
+}
 
 function Keyboarder() {
   var keyState = {};
