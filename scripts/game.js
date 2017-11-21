@@ -47,6 +47,8 @@ Game.prototype.draw = function(screen, gameSize) {
   this.bodies.forEach(function(body) {
     if (body instanceof Invader){
       drawInvader(screen, body)
+    } else if(body instanceof Player) {
+      drawPlayer(screen, body)
     } else {
       drawRect(screen, body)
     }
@@ -73,7 +75,7 @@ Game.prototype.loseGame = function() {
 
 function Player(game, gameSize) {
   this.game = game;
-  this.size = { x: 15, y: 15 };
+  this.size = { x: 25, y: 25 };
   this.center = {x: gameSize.x / 2, y: gameSize.y - this.size.x };
   this.keyboarder = new Keyboarder();
   this.justShot = false;
@@ -148,10 +150,18 @@ function createInvaders(game) {
 };
 
 function drawRect(screen, body) {
+  screen.fillStyle = "#FF0000";
   screen.fillRect(body.center.x - body.size.x / 2,
                     body.center.y - body.size.y / 2,
                     body.size.x, body.size.y);
 };
+
+function drawPlayer(screen, body) {
+  var img = new Image();
+  img.src = "images/falcon.png"
+  screen.drawImage(img, body.center.x - body.size.x / 2,
+                    body.center.y - body.size.y / 2, body.size.x, body.size.y)
+}
 
 function drawInvader(screen, body) {
   var img = new Image();
