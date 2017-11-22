@@ -4,6 +4,7 @@ function Game(screenId) {
   var gameSize = { x: canvas.width, y: canvas.height};
   this.bodies = createInvaders(this).concat(new Player(this, gameSize));
   this.gameOver = false;
+  this.score = 0;
 
   this.animate 
   var self = this;
@@ -20,14 +21,18 @@ function Game(screenId) {
 
 Game.prototype.update = function() {
   var bodies = this.bodies;
+  var invadersAlive = this.countInvaders();
   var notColliding = function(b1) {
     return bodies.filter(function(b2) {
       return colliding(b1, b2);
     }).length === 0;
   };
-  
   this.bodies = this.bodies.filter(notColliding);
   
+  var invadersKilled = invadersAlive - this.countInvaders();
+  this.score += invadersKilled*20;
+  updateScore(this.score)
+
   var playerIsAlive = this.bodies.some(function(body) {
     return body instanceof Player;
   });
@@ -40,6 +45,13 @@ Game.prototype.update = function() {
     this.bodies[i].update();
   };
 };
+
+Game.prototype.countInvaders = function() {
+  var livingInvaders = this.bodies.filter(function(body){
+    return body instanceof Invader
+  })
+  return livingInvaders.length
+}
 
 Game.prototype.draw = function(screen, gameSize) {
   screen.clearRect(0, 0, gameSize.x, gameSize.y);
@@ -70,6 +82,7 @@ Game.prototype.invadersBelow = function(invader) {
 Game.prototype.loseGame = function() {
   console.log('Game over!')
   this.gameOver = true;
+  displayGameOver()
   cancelAnimationFrame(this.animate)
 }
 
@@ -183,6 +196,16 @@ function Keyboarder() {
   };
   this.KEYS = {LEFT: 37, RIGHT: 39, SPACE: 32};
 };
+
+function updateScore(score) {
+  var gameScore = document.querySelector('.game-score');
+  gameScore.innerText = score;
+}
+
+function displayGameOver() {
+  var score = document.querySelector('.score')
+  score.innerText = 'Game Over' 
+}
 
 function colliding(b1, b2) {
   return !(b1 === b2 || 

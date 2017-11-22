@@ -1,6 +1,21 @@
+h1 {
+  font-family: 'Lato';
+  font-weight: 900;
+  font-size: 44px;
+  text-align: center;
+  margin: 30px auto 20px;
+}
+
+p {
+  font-family: 'Lato';
+  font-weight: 700;
+  font-size: 12px;
+  text-align: center;
+}
+
 #screen {
   border: 1px solid black;
   display: block;
-  margin: 40px auto;
+  margin: 20px auto;
 }
 
