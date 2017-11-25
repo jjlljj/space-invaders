@@ -223,11 +223,24 @@ function colliding(b1, b2) {
 function SoundTrack(midiTrack) {
   var synth = new Tone.PolySynth(8);
   var freeverb = new Tone.Freeverb();
+  var volume = new Tone.Volume(-10);
 
   freeverb.dampening.value = 1000;
   freeverb.wet.value = .3;
 
-  synth.chain(freeverb, Tone.Master);
+  synth.chain(freeverb, volume, Tone.Master);
+
+  var muteButton = document.querySelector('#mute-button');
+
+  muteButton.addEventListener('click', function(){
+    console.log(volume.volume.value)
+    if (volume.volume.value < -50) {
+      volume.volume.rampTo(-10, 1) 
+    } else {
+      volume.volume.cancelScheduledValues();
+      volume.volume.rampTo(-Infinity, 1.5);
+    }
+  });
 
   function play(midiTrack) {
     Tone.Transport.bpm.value = 105;
